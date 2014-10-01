@@ -1,20 +1,28 @@
 
 import unittest
 
+from branch_and_bound.airline_subproblem import AirlineSubProblem
 
-class Branch_and_boundTestCase(unittest.TestCase):
+
+class AirlineSubProblemTestCase(unittest.TestCase):
 
     def setUp(self):
         pass
-        
+
     def tearDown(self):
         pass
-        
-    # add some tests here...
-    
-    #def test_Branch_and_bound(self):
-        #pass
-        
+
+    def test_A(self):
+
+        asp = AirlineSubProblem()
+        asp.run()
+        self.assertEqual(asp.A.shape, (14,12))
+
+class BandBTestCase(unittest.TestCase):
+
+    def test_banb(self):
+        pass
+
+
 if __name__ == "__main__":
     unittest.main()
-    

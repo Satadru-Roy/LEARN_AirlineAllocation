@@ -10,6 +10,13 @@ Package Metadata
 
 - **description-file:** README.txt
 
+- **entry_points**:: 
+
+    [openmdao.component]
+    branch_and_bound.branch_and_bound.BranchBound=branch_and_bound.branch_and_bound:BranchBound
+    [openmdao.container]
+    branch_and_bound.branch_and_bound.BranchBound=branch_and_bound.branch_and_bound:BranchBound
+
 - **keywords:** openmdao
 
 - **name:** branch_and_bound

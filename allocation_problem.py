@@ -2,11 +2,11 @@ import numpy as np
 
 from openmdao.main.api import Assembly
 from openmdao.lib.drivers.api import IterateUntil
+from openmdao.lib.casehandlers.api import JSONCaseRecorder
 
 from branch_and_bound.airline_subproblem import AirlineSubProblem
 from branch_and_bound.branch_and_bound import BranchBoundLinear
-from branch_and_bound.linear_program import LPSolver
-from branch_and_bound.linear_program import LinProgSolver
+from branch_and_bound.linear_program import LPSolver, LinProgSolver
 from branch_and_bound.fleet_analysis import FleetAnalysis
 
 class AllocationProblem(Assembly):
@@ -50,6 +50,9 @@ class AllocationProblem(Assembly):
 
         self.iter.add_stop_condition('branchbound_algorithm.exec_loop != 0')
         self.iter.max_iterations = 1000000
+
+        #data recording
+        self.recorders = [JSONCaseRecorder('airline_allocation.json')]
 
 
 if __name__ == "__main__":

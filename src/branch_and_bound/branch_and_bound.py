@@ -38,7 +38,7 @@ class BranchBoundLinear(Component):
     ub_init  = Array(iotype='in',
           desc='initial upper bounds for each independent variable in the solution')
 
-    xopt_current = Array([], iotype='in',
+    xopt_current = Array(iotype='in',
             desc='optimal design variable values of the relaxed solution after each iteration obtained from the solver')
 
     relaxed_obj_current   = Float(np.inf, iotype='in',

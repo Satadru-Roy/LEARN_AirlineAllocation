@@ -30,8 +30,8 @@ class NonLinTest(Assembly):
 
         # Connect Airline Allocation SubProblem Component with Branch  and Bound Algorithm Component and the solver
         # Connect Branch  and Bound Algorithm Component with the solver component
-        self.connect('branchbound_algorithm.lb',  'nonlinopt.lb')
-        self.connect('branchbound_algorithm.ub',  'nonlinopt.ub')
+        self.connect('branchbound_algorithm.lb', 'nonlinopt.lb')
+        self.connect('branchbound_algorithm.ub', 'nonlinopt.ub')
 
         # Connect solver component with the Branch  and Bound Algorithm Component (return results)
         self.connect('nonlin_test_prob.x',     'branchbound_algorithm.xopt_current')

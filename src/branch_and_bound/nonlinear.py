@@ -21,7 +21,7 @@ class NonLinearTestProblem(Component):
 
     # x1 = Float(iotype="in") 
     # x2 = Float(iotype="in") 
-    x = Array([1.5,0.], iotype="in", dtype="float")
+    x = Array([0.,0.], iotype="in", dtype="float")
 
     f = Float(iotype="out")
     g1 = Float(iotype="out")
@@ -159,7 +159,6 @@ class BandBSLSQPdriver(Driver):
         ljw = max(mineq, (n+1)-meq)
         jw = zeros([ljw], 'i')
 
-        print "foobar", self.x
         try:
             dg, self.error_code, self.nfunc, self.ngrad = \
               slsqp(self.ncon, self.neqcon, la, self.nparam,
@@ -197,7 +196,6 @@ class BandBSLSQPdriver(Driver):
 
         Note: m, me, la, n, f, and g are unused inputs."""
         print "xnew", xnew
-        exit()
 
         self.set_parameters(xnew)
         super(BandBSLSQPdriver, self).run_iteration()

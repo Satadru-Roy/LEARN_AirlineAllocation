@@ -21,7 +21,7 @@ class NonLinearTestProblem(Component):
 
     # x1 = Float(iotype="in") 
     # x2 = Float(iotype="in") 
-    x = Array([0,0], iotype="in")
+    x = Array([1.5,0.], iotype="in", dtype="float")
 
     f = Float(iotype="out")
     g1 = Float(iotype="out")
@@ -34,6 +34,7 @@ class NonLinearTestProblem(Component):
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
+        print "here", x1, x2, self.f, self.g1, self.g2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -69,8 +70,10 @@ class BandBSLSQPdriver(Driver):
     error_code = Int(0, iotype='out',
                      desc='Error code returned from SLSQP.')
 
-    lb = Array([0,0], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
-    ub = Array([0,0], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
+    exit_flag = Int(0, iotype="out", desc="0 for fail, 1 for ok")
+
+    lb = Array([0.,0.], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
+    ub = Array([0.,0.], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
 
 
     def __init__(self):
@@ -179,7 +182,10 @@ class BandBSLSQPdriver(Driver):
         # Log any errors
         if self.error_code != 0:
             self._logger.warning(self.error_messages[self.error_code])
-            
+            self.exit_flag = 0
+        else: 
+            self.exit_flag = 1
+
 
         # Iteration is complete
         self._continue = False
@@ -204,6 +210,7 @@ class BandBSLSQPdriver(Driver):
         if self.iprint > 0:
             pyflush(self.iout)
 
+        #print "    here", self.x, f, g
         return f, g
 
     def _grad(self, m, me, la, n, f, g, df, dg, xnew):

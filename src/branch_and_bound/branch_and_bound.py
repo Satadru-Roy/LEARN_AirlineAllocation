@@ -117,9 +117,13 @@ class BranchBoundLinear(Component):
         self.num_int = len(self.f_int)
         self.num_des = self.num_int + len(self.f_con)
 
+        #just make some local references
+        Aset = self.Aset 
+        Fsub_i = self.Fsub_i
 
+        #for the first iteration, need to put the initial problem into the active set
         first_run = False
-        if self._iter == 1:
+        if self._iter == 1: 
             prob = Problem()
             prob.A    = self.A_init
             prob.b    = self.b_init
@@ -131,18 +135,14 @@ class BranchBoundLinear(Component):
             prob.x_F = []
             prob.b_F = 0
             prob.eflag = 0
-            self.Aset.append(prob)
+            Aset.append(prob)
             first_run = True
 
-        Aset = self.Aset
-
-        Fsub_i = self.Fsub_i
         if not first_run:
             Aset[Fsub_i].eflag = self.exitflag_LP
             Aset[Fsub_i].x_F = self.xopt_current
             Aset[Fsub_i].b_F = self.relaxed_obj_current
 
-        if not first_run:
             if ((Aset[Fsub_i].eflag >= 1) and (Aset[Fsub_i].b_F < self.U_best)):
                 # Rounding integers
                 aa = np.where(np.abs(np.round(Aset[Fsub_i].x_F) - Aset[Fsub_i].x_F) <= 1e-06)
@@ -209,8 +209,7 @@ class BranchBoundLinear(Component):
             else:
                 del Aset[Fsub_i]  # Fathomed by infeasibility or bounds
 
-        print "BandB", self._iter, len(self.Aset), Fsub_i
-        if not Aset:
+        if not Aset: #problem stops when Aset is empty
             self.exec_loop = 1
             print '\nTerminating Branch and Bound algorithm...'
             if self.ter_crit ==1:

@@ -4,34 +4,25 @@ from openmdao.main.api import Assembly
 from openmdao.lib.drivers.api import IterateUntil
 from openmdao.lib.casehandlers.api import JSONCaseRecorder
 
-from branch_and_bound.airline_subproblem import AirlineSubProblem
-from branch_and_bound.branch_and_bound import BranchBoundLinear
-from branch_and_bound.linear_program import LPSolver, LinProgSolver
-from branch_and_bound.fleet_analysis import FleetAnalysis
+from branch_and_bound.branch_and_bound import BranchBound
+from branch_and_bound.nonlinear import NonLinearTestProblem, BandBSLSQPdriver
 
-class AllocationProblem(Assembly):
+class NonLinTest(Assembly):
 
     def configure(self):
-        self.add('iter', IterateUntil())
-        self.add('airline_subproblem', AirlineSubProblem())
-        self.add('branchbound_algorithm', BranchBoundLinear())
-        #self.add('solver', LPSolver())
-        self.add('solver', LinProgSolver())
-        self.add('fleet_analysis', FleetAnalysis())
+        self.add('driver', IterateUntil())
+        self.add('branchbound_algorithm', BranchBound())
+        self.add('nonlinopt', BandBSLSQPdriver())
+        self.add('nonlin_test_prob', NonLinearTestProblem())
 
         #iteration hierachy
-        self.driver.workflow.add(['airline_subproblem','iter','fleet_analysis'])
-        self.iter.workflow.add(['branchbound_algorithm','solver'])
+        self.driver.workflow.add(['branchbound_algorithm','nonlinopt'])
+        self.nonlinopt.workflow.add('nonlin_test_prob')
 
         #data connections
 
         # Connect Airline Allocation SubProblem Component with Branch  and Bound Algorithm Component and the solver
-        self.connect('airline_subproblem.f_int',    ['branchbound_algorithm.f_int','solver.f_int'])
-        self.connect('airline_subproblem.f_con',    ['branchbound_algorithm.f_con','solver.f_con'])
-        self.connect('airline_subproblem.A_init',   'branchbound_algorithm.A_init')
-        self.connect('airline_subproblem.b_init',   'branchbound_algorithm.b_init')
-        self.connect('airline_subproblem.Aeq',      ['branchbound_algorithm.Aeq','solver.A_eq'])
-        self.connect('airline_subproblem.beq',      ['branchbound_algorithm.beq','solver.b_eq'])
+
         self.connect('airline_subproblem.lb_init',  'branchbound_algorithm.lb_init')
         self.connect('airline_subproblem.ub_init',  'branchbound_algorithm.ub_init')
 

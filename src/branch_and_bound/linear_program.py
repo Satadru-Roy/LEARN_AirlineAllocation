@@ -152,12 +152,17 @@ class LinProgSolver(Component):
                           A_ub=self.A, b_ub=self.b,
                           bounds=bounds,
                           options={ 'maxiter': 1000, 'disp': True })
-        print results
 
-        self.xopt = results.x
-        self.fun_opt = results.fun
+       
+        self.success = True if results.status == 0 else False
+        if self.success: 
+            self.xopt = results.x
+            self.fun_opt = results.fun
+        else: 
+            self.x = np.nan*np.ones(self.xopt.shape)
+            self.fun_opt = np.nan
 
-        self.success = True if results == 0 else False
+
         # translate status to MATLAB equivalent exit flag
         if results.status == 0:         # optimized
             self.exitflag_LP = 1

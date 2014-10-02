@@ -62,7 +62,7 @@ class BranchBoundLinear(Component):
             desc='upper bounds for each independent variable in the solution')
 
     # Outputs to post processing component (Final output from Branch and bound algorithm)
-    xopt = Array(np.zeros(12), iotype='out',
+    xopt = Array(iotype='out',
             desc='independent variable vector which optimizes the integer programming problem')
 
     obj_opt   = Float(iotype='out',
@@ -122,7 +122,6 @@ class BranchBoundLinear(Component):
         Fsub_i = self.Fsub_i
 
         #for the first iteration, need to put the initial problem into the active set
-        first_run = False
         if self._iter == 1: 
             prob = Problem()
             prob.A    = self.A_init
@@ -136,9 +135,8 @@ class BranchBoundLinear(Component):
             prob.b_F = 0
             prob.eflag = 0
             Aset.append(prob)
-            first_run = True
 
-        if not first_run:
+        if self._iter > 1:
             Aset[Fsub_i].eflag = self.exitflag_LP
             Aset[Fsub_i].x_F = self.xopt_current
             Aset[Fsub_i].b_F = self.relaxed_obj_current

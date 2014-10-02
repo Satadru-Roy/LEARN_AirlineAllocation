@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     ap.branchbound_algorithm.lb = ap.branchbound_algorithm.lb_init = ap.solver.lb = ap.airline_subproblem.lb_init
     ap.branchbound_algorithm.ub = ap.branchbound_algorithm.ub_init = ap.solver.ub = ap.airline_subproblem.ub_init
-    ap.solver.xopt = np.zeros((ap.solver.f_int.shape[0]+ap.solver.f_con.shape[0], ))
+    ap.solver.xopt = ap.branchbound_algorithm = np.zeros((ap.solver.f_int.shape[0]+ap.solver.f_con.shape[0], ))
 
     ap.run()
 

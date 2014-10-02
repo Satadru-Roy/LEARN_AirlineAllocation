@@ -163,7 +163,6 @@ class BranchBoundLinear(Component):
                     del Aset[Fsub_i]  # Fathom by integrality
                     self.ter_crit = 1
 
-                    print self.x_best
                 else:
                     if self.app_cut == 1:
                         A_bound = np.concatenate((np.eye(self.num_des),-1*np.eye(self.num_des)))

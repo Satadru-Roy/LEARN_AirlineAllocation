@@ -7,7 +7,7 @@ from branch_and_bound.airline_subproblem import AirlineSubProblem
 from branch_and_bound.branch_and_bound import BranchBoundLinear
 from branch_and_bound.linear_program import LPSolver
 from branch_and_bound.linear_program import LinProgSolver
-from branch_and_bound.airline_analysis import AirlineAnalysis
+from branch_and_bound.fleet_analysis import FleetAnalysis
 
 class AllocationProblem(Assembly):
 
@@ -17,10 +17,10 @@ class AllocationProblem(Assembly):
         self.add('branchbound_algorithm', BranchBoundLinear())
         self.add('solver', LPSolver())
         #self.add('solver', LinProgSolver())
-        self.add('airline_analysis', AirlineAnalysis())
+        self.add('fleet_analysis', FleetAnalysis())
 
         #iteration hierachy
-        self.driver.workflow.add(['airline_subproblem','iter','airline_analysis'])
+        self.driver.workflow.add(['airline_subproblem','iter','fleet_analysis'])
         self.iter.workflow.add(['branchbound_algorithm','solver'])
 
         #data connections
@@ -46,7 +46,7 @@ class AllocationProblem(Assembly):
         self.connect('solver.fun_opt',     'branchbound_algorithm.relaxed_obj_current')
         self.connect('solver.exitflag_LP',    'branchbound_algorithm.exitflag_LP')
 
-        self.connect('branchbound_algorithm.xopt', 'airline_analysis.xopt')
+        self.connect('branchbound_algorithm.xopt', 'fleet_analysis.xopt')
 
         self.iter.add_stop_condition('branchbound_algorithm.exec_loop != 0')
         self.iter.max_iterations = 1000000
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     print 'Exitflag status:  \t', ap.branchbound_algorithm.exitflag_BB
     print 'No. of function call: \t', ap.branchbound_algorithm.funCall
     #Print Allocation results
-    print '\nAircraft Trip Details: \t\n', ap.airline_analysis.DetailTrips
-    print '\nPassenger Details: \t\n', ap.airline_analysis.PaxDetail
-    print "\nAirline's Net Profit [$]: \t", ap.airline_analysis.Profit
+    print '\nAircraft Trip Details: \t\n', ap.fleet_analysis.DetailTrips
+    print '\nPassenger Details: \t\n', ap.fleet_analysis.PaxDetail
+    print "\nAirline's Net Profit [$]: \t", ap.fleet_analysis.Profit
     print '==============================================\n'

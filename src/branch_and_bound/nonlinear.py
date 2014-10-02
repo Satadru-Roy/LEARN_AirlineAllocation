@@ -34,7 +34,7 @@ class NonLinearTestProblem(Component):
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
-        print "here", x1, x2, self.f, self.g1, self.g2
+        print "here", x1, x2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -195,6 +195,9 @@ class BandBSLSQPdriver(Driver):
         evaluations.
 
         Note: m, me, la, n, f, and g are unused inputs."""
+        print "xnew", xnew
+        exit()
+
         self.set_parameters(xnew)
         super(BandBSLSQPdriver, self).run_iteration()
         f = self.eval_objective()

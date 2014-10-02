@@ -28,7 +28,6 @@ class AirlineAnalysis(Component):
         J = data.inputs.DVector.shape[0]  # number of routes
         K = len(data.inputs.AvailPax)     # number of aircraft types
         KJ  = K*J
-        print self.parent.branchbound_algorithm.xopt
 
         x_hat = self.xopt[0:KJ]                # Airline allocation variable
         aa = np.where(np.abs(x_hat - 0.) < 1e-06)[0]

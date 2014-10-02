@@ -118,11 +118,11 @@ class BranchBoundLinear(Component):
         self.num_des = self.num_int + len(self.f_con)
 
         #just make some local references
-        Aset = self.Aset 
+        Aset = self.Aset
         Fsub_i = self.Fsub_i
 
         #for the first iteration, need to put the initial problem into the active set
-        if self._iter == 1: 
+        if self._iter == 1:
             prob = Problem()
             prob.A    = self.A_init
             prob.b    = self.b_init
@@ -213,7 +213,6 @@ class BranchBoundLinear(Component):
             if self.ter_crit ==1:
                 self.exitflag_BB = 1
                 self.xopt = self.x_best
-                print "foobar", self.x_best
                 self.obj_opt = self.f_best
                 print 'Solution found!!'
             else:
@@ -244,6 +243,7 @@ class BranchBoundLinear(Component):
             self.lb = Aset[Fsub_i].lb
             self.ub = Aset[Fsub_i].ub
             self.Fsub_i = Fsub_i
+            self.funCall = self.funCall + 1
 
             if self._iter == 1:
                 x_best_relax = Aset[Fsub_i].x_F

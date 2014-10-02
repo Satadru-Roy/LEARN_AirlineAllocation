@@ -15,8 +15,8 @@ class AllocationProblem(Assembly):
         self.add('iter', IterateUntil())
         self.add('airline_subproblem', AirlineSubProblem())
         self.add('branchbound_algorithm', BranchBoundLinear())
-        #self.add('solver', LPSolver())
-        self.add('solver', LinProgSolver())
+        self.add('solver', LPSolver())
+        #self.add('solver', LinProgSolver())
         self.add('airline_analysis', AirlineAnalysis())
 
         #iteration hierachy

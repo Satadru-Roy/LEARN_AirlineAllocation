@@ -6,6 +6,7 @@ from openmdao.lib.drivers.api import IterateUntil
 from branch_and_bound.airline_subproblem import AirlineSubProblem
 from branch_and_bound.branch_and_bound import BranchBoundLinear
 from branch_and_bound.linear_program import LPSolver
+from branch_and_bound.linear_program import LinProgSolver
 from branch_and_bound.airline_analysis import AirlineAnalysis
 
 class AllocationProblem(Assembly):
@@ -14,7 +15,8 @@ class AllocationProblem(Assembly):
         self.add('iter', IterateUntil())
         self.add('airline_subproblem', AirlineSubProblem())
         self.add('branchbound_algorithm', BranchBoundLinear())
-        self.add('solver', LPSolver())
+        #self.add('solver', LPSolver())
+        self.add('solver', LinProgSolver())
         self.add('airline_analysis', AirlineAnalysis())
 
         #iteration hierachy

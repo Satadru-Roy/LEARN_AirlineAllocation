@@ -4,19 +4,17 @@ from openmdao.main.api import Component
 from openmdao.lib.datatypes.api import Float, Array, Bool, Int
 
 #Choose the solver that solves the relaxed programming problem
-solver = 'linprog'
-if solver == 'linprog':
-    try:
-        from scipy.optimize import linprog
-    except ImportError, e:
-        print "SciPy version >= 0.15.0 is required for linprog support!!"
-        pass
-elif solver == 'lpsolve':
-    try:
-        from lpsolve55 import *
-    except ImportError:
-        print 'lpsolve is not available'
-        pass
+
+try:
+    from scipy.optimize import linprog
+except ImportError, e:
+    print "SciPy version >= 0.15.0 is required for linprog support!!"
+    pass
+try:
+    from lpsolve55 import *
+except ImportError:
+    print 'lpsolve is not available'
+    pass
 
 class LPSolver(Component):
     """ A simple component wrapper for lpsolve
@@ -150,10 +148,11 @@ class LinProgSolver(Component):
         bounds = zip(self.lb.flatten(), self.ub.flatten())
         f = np.hstack((self.f_int, self.f_con))
         results = linprog(f,
-                          Aeq=self.A_eq, beq=self.b_eq,
+                          A_eq=self.A_eq, b_eq=self.b_eq,
                           A_ub=self.A, b_ub=self.b,
                           bounds=bounds,
                           options={ 'maxiter': 1000, 'disp': True })
+        print results
 
         self.xopt = results.x
         self.fun_opt = results.fun

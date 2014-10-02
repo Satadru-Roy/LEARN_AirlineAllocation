@@ -2,7 +2,7 @@ import numpy as np
 from openmdao.main.api import Component
 from openmdao.lib.datatypes.api import Float, Array
 
-class AirlineAnalysis(Component):
+class FleetAnalysis(Component):
     """ Airline allocation result analysis compnent analyzes the allocation data and present it in the user interpretable format """
 
     #inputs
@@ -95,9 +95,4 @@ class AirlineAnalysis(Component):
         PPNM   = PPNM
         self.Profit = np.sum(RevArray - CostArray)
 
-##        # allocation detail info
-##        self.Info = []
-##        for i in range(len(RVector)):
-##            a = np.where(detailtrips[:, i])[0]
-##            info = np.array([a, detailtrips[a, i], pax_rep[a, i]])
-##            self.Info.append(info)
+

@@ -162,7 +162,6 @@ class LinProgSolver(Component):
             self.x = np.nan*np.ones(self.xopt.shape)
             self.fun_opt = np.nan
 
-
         # translate status to MATLAB equivalent exit flag
         if results.status == 0:         # optimized
             self.exitflag_LP = 1

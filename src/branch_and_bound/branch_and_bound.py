@@ -274,12 +274,6 @@ class BranchBoundNonLinear(Component):
 
 
     # Outputs to solver that solves the relaxed problem formulation
-    A = Array(iotype='out',
-        desc='Updated inequality constraint coefficient matrix: [Ax<=b]')
-
-    b = Array(iotype='out',
-        desc='Updated inequality bound vector: [Ax<=b]')
-
     lb = Array(iotype='out',
             desc='lower bounds for each independent variable in the solution')
 
@@ -310,7 +304,7 @@ class BranchBoundNonLinear(Component):
               desc='number of times the solver is called')
 
 
-    def __init__(self):
+    def __init__(self, n_int, n_cont):
         super(BranchBoundLinear, self).__init__()
 
         self._iter = 0

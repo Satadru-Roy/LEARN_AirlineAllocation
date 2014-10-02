@@ -67,6 +67,10 @@ class BandBSLSQPdriver(Driver):
     error_code = Int(0, iotype='out',
                      desc='Error code returned from SLSQP.')
 
+    lb = Array([0,0], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
+    ub = Array([0,0], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
+    
+
     def __init__(self):
 
         super(SLSQPdriver, self).__init__()

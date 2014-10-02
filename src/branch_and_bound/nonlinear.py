@@ -34,7 +34,7 @@ class NonLinearTestProblem(Component):
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
-        print "here", x1, x2
+        print "component execute", x1, x2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -159,6 +159,7 @@ class BandBSLSQPdriver(Driver):
         ljw = max(mineq, (n+1)-meq)
         jw = zeros([ljw], 'i')
 
+        print "foobar", self.x
         try:
             dg, self.error_code, self.nfunc, self.ngrad = \
               slsqp(self.ncon, self.neqcon, la, self.nparam,

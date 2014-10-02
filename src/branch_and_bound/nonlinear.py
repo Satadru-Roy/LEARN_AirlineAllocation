@@ -19,8 +19,9 @@ from openmdao.util.decorators import add_delegate
 class NonLinearTestProblem(Component): 
     """Non linear test problem for branch and bound applications""" 
 
-    x1 = Float(iotype="in") 
-    x2 = Float(iotype="in") 
+    # x1 = Float(iotype="in") 
+    # x2 = Float(iotype="in") 
+    x = Array([0.,0.], iotype="in", dtype="float")
 
     f = Float(iotype="out")
     g1 = Float(iotype="out")
@@ -28,10 +29,12 @@ class NonLinearTestProblem(Component):
 
     def execute(self): 
         
-        x1,x2 = self.x1, self.x2
+        x1 = self.x[0]
+        x2 = self.x[1]
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
+        print "component execute", x1, x2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -67,13 +70,15 @@ class BandBSLSQPdriver(Driver):
     error_code = Int(0, iotype='out',
                      desc='Error code returned from SLSQP.')
 
-    lb = Array([0,0], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
-    ub = Array([0,0], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
-    
+    exit_flag = Int(0, iotype="out", desc="0 for fail, 1 for ok")
+
+    lb = Array([0.,0.], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
+    ub = Array([0.,0.], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
+
 
     def __init__(self):
 
-        super(SLSQPdriver, self).__init__()
+        super(BandBSLSQPdriver, self).__init__()
 
         self.error_messages = {
             -1 : "Gradient evaluation required (g & a)",
@@ -110,7 +115,7 @@ class BandBSLSQPdriver(Driver):
         """Perform initial setup before iteration loop begins."""
 
         # Inital run to make sure the workflow executes
-        super(SLSQPdriver, self).run_iteration()
+        super(BandBSLSQPdriver, self).run_iteration()
 
         self.inputs = self.list_param_group_targets()
         self.obj = self.list_objective_targets()
@@ -121,8 +126,10 @@ class BandBSLSQPdriver(Driver):
         self.neqcon = self.total_eq_constraints()
 
         self.x = self.eval_parameters(self.parent)
-        self.x_lower_bounds = self.get_lower_bounds()
-        self.x_upper_bounds = self.get_upper_bounds()
+        #self.x_lower_bounds = self.get_lower_bounds()
+        #self.x_upper_bounds = self.get_upper_bounds()
+        self.x_lower_bounds = self.lb
+        self.x_upper_bounds = self.ub
 
         self.ff = 0
         self.nfunc = 0
@@ -175,6 +182,10 @@ class BandBSLSQPdriver(Driver):
         # Log any errors
         if self.error_code != 0:
             self._logger.warning(self.error_messages[self.error_code])
+            self.exit_flag = 0
+        else: 
+            self.exit_flag = 1
+
 
         # Iteration is complete
         self._continue = False
@@ -184,8 +195,10 @@ class BandBSLSQPdriver(Driver):
         evaluations.
 
         Note: m, me, la, n, f, and g are unused inputs."""
+        print "xnew", xnew
+
         self.set_parameters(xnew)
-        super(SLSQPdriver, self).run_iteration()
+        super(BandBSLSQPdriver, self).run_iteration()
         f = self.eval_objective()
 
         if isnan(f):
@@ -199,6 +212,7 @@ class BandBSLSQPdriver(Driver):
         if self.iprint > 0:
             pyflush(self.iout)
 
+        #print "    here", self.x, f, g
         return f, g
 
     def _grad(self, m, me, la, n, f, g, df, dg, xnew):

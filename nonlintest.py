@@ -11,13 +11,12 @@ class NonLinTest(Assembly):
 
     def configure(self):
         self.add('driver', IterateUntil())
-        self.add('branchbound_algorithm', BranchBoundNonLinear())
-        self.add('nonlinopt', BandBSLSQPdriver(n_int = 2, n_cont = 0))
+        self.add('branchbound_algorithm', BranchBoundNonLinear(n_int = 2, n_cont = 0))
+        self.add('nonlinopt', BandBSLSQPdriver())
         self.add('nonlin_test_prob', NonLinearTestProblem())
 
         #nonlin problem formulation
-        self.nonlinopt.add_parameter('nonlin_test_prob.x1', low=0, high=1e15)
-        self.nonlinopt.add_parameter('nonlin_test_prob.x2', low=0, high=1e15)
+        self.nonlinopt.add_parameter('nonlin_test_prob.x', low=0, high=1e15)
 
         self.nonlinopt.add_objective('nonlin_test_prob.f')
         self.nonlinopt.add_constraint('nonlin_test_prob.g1 < 0')
@@ -31,28 +30,32 @@ class NonLinTest(Assembly):
 
         # Connect Airline Allocation SubProblem Component with Branch  and Bound Algorithm Component and the solver
         # Connect Branch  and Bound Algorithm Component with the solver component
-        self.connect('branchbound_algorithm.lb',  'nonlinopt.lb')
-        self.connect('branchbound_algorithm.ub',  'nonlinopt.ub')
+        self.connect('branchbound_algorithm.lb', 'nonlinopt.lb')
+        self.connect('branchbound_algorithm.ub', 'nonlinopt.ub')
 
         # Connect solver component with the Branch  and Bound Algorithm Component (return results)
-        self.connect('nonlinopt.xopt',     'branchbound_algorithm.xopt_current')
-        self.connect('nonlinopt.fun_opt',     'branchbound_algorithm.relaxed_obj_current')
-        self.connect('nonlinopt.exitflag_LP',    'branchbound_algorithm.exitflag_LP')
+        self.connect('nonlin_test_prob.x',     'branchbound_algorithm.xopt_current')
+        self.connect('nonlin_test_prob.f',     'branchbound_algorithm.relaxed_obj_current')
+        self.connect('nonlinopt.exit_flag',    'branchbound_algorithm.exitflag_NLP')
 
-        self.iter.add_stop_condition('branchbound_algorithm.exec_loop != 0')
-        self.iter.max_iterations = 1000000
+        self.driver.add_stop_condition('branchbound_algorithm.exec_loop != 0')
+        self.driver.max_iterations = 1000000
+
 
 
 if __name__ == "__main__":
     nlt = NonLinTest()
 
-    nlt.branchbound_algorithm.lb_init = [0.,0.]
-    nlt.branchbound_algorithm.ub_init = [1e15, 1e15]
-
-    nlt.nonlin_test_prob.x1 = 50
-    nlt.nonlin_test_prob.x2 = 50
-
+    nlt.nonlinopt.lb = nlt.branchbound_algorithm.lb_init = [0.,0.]
+    nlt.nonlinopt.ub = nlt.branchbound_algorithm.ub_init = [1e15, 1e15]
 
     nlt.run()
+
+    print "x_opt: ", nlt.branchbound_algorithm.xopt
+    print "obj_opt: ", nlt.branchbound_algorithm.obj_opt
+
+
+
+
 
 

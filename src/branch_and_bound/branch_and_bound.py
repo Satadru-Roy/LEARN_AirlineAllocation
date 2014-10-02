@@ -183,7 +183,7 @@ class BranchBoundLinear(Component):
                             self.cut_num = self.cut_num + 1
 
                     # Branching
-                    x_ind_maxfrac = np.argmax(np.abs(Aset[Fsub_i].x_F[range(self.num_int)] - np.round(Aset[Fsub_i].x_F[range(self.num_int)])))
+                    x_ind_maxfrac = np.argmax(np.abs(Aset[Fsub_i].x_F[:self.num_int] - np.round(Aset[Fsub_i].x_F[:self.num_int])))
                     x_split = Aset[Fsub_i].x_F[x_ind_maxfrac]
                     print 'Branching at node: %d at x%d = %f' % (Aset[Fsub_i].node, x_ind_maxfrac+1, x_split)
                     F_sub = [None, None]
@@ -269,7 +269,7 @@ class BranchBoundNonLinear(Component):
     relaxed_obj_current  = Float(np.inf, iotype='in',
             desc='optimal objective function value of the relaxed solution after each iteration obtained from the solver')
 
-    exitflag_LP = Float(iotype='in',
+    exitflag_NLP = Float(iotype='in',
               desc='exit status of the optimization: 1=optimized, -1=max iterations reached, -2=infeasible, -3=unbounded')
 
 
@@ -305,14 +305,14 @@ class BranchBoundNonLinear(Component):
 
 
     def __init__(self, n_int, n_cont):
-        super(BranchBoundLinear, self).__init__()
+        super(BranchBoundNonLinear, self).__init__()
 
         self._iter = 0
         self.iter_max = 10000000
         self.funCall = 0
         self.exitflag_BB = 0
-        #self.U_best = np.inf  # If you are testing the code use this line, instead of U_best = 0
-        self.U_best = 0 #Do nothing: zero profit (worst case) [For airline allocation]
+        self.U_best = np.inf  # If you are testing the code use this line, instead of U_best = 0
+        #self.U_best = 0 #Do nothing: zero profit (worst case) [For airline allocation]
 
         self.obj_opt = 0.0
         self.can_x = []
@@ -324,8 +324,11 @@ class BranchBoundNonLinear(Component):
         self.tree = [1]
         self.app_cut = 0 # Cut feature currently disabled
         self.cut_num = 0
-        self.exitflag_LP = 0
+        self.exitflag_NLP = 0
         self.Fsub_i = 0
+
+        self.num_int = n_int
+        self.num_des = n_cont + n_int
 
         self.Aset = []
 
@@ -333,18 +336,14 @@ class BranchBoundNonLinear(Component):
     def execute(self):
         self._iter = self._iter + 1
 
-        self.num_int = len(self.f_int)
-        self.num_des = self.num_int + len(self.f_con)
-
         #just make some local references
         Aset = self.Aset
         Fsub_i = self.Fsub_i
 
+
         #for the first iteration, need to put the initial problem into the active set
         if self._iter == 1:
             prob = Problem()
-            prob.A    = self.A_init
-            prob.b    = self.b_init
             prob.lb   = self.lb_init
             prob.ub   = self.ub_init
             prob.relaxed_obj  = 0
@@ -355,10 +354,14 @@ class BranchBoundNonLinear(Component):
             prob.eflag = 0
             Aset.append(prob)
 
+
+
+
         if self._iter > 1:
-            Aset[Fsub_i].eflag = self.exitflag_LP
+            Aset[Fsub_i].eflag = self.exitflag_NLP
             Aset[Fsub_i].x_F = self.xopt_current
             Aset[Fsub_i].b_F = self.relaxed_obj_current
+
 
             if ((Aset[Fsub_i].eflag >= 1) and (Aset[Fsub_i].b_F < self.U_best)):
                 # Rounding integers
@@ -381,28 +384,8 @@ class BranchBoundNonLinear(Component):
                     self.ter_crit = 1
 
                 else:
-                    if self.app_cut == 1:
-                        A_bound = np.concatenate((np.eye(self.num_des),-1*np.eye(self.num_des)))
-                        b_bound = np.concatenate((Aset[Fsub_i].ub,-1*Aset[Fsub_i].lb))
-
-                        aa = []
-                        for kk in range(len(b_bound)):
-                            if b_bound[kk] != np.inf and b_bound[kk] !=0:
-                                aa.append(kk)
-
-                        A_bound = A_bound[aa][:]
-                        b_bound = b_bound[aa]
-                        A_mod = np.concatenate((Aset[Fsub_i].A,A_bound))
-                        b_mod = np.concatenate((Aset[Fsub_i].b,b_bound))
-
-                        A_up, b_up, cut_flag = GomoryMIR_cut(Aset[Fsub_i].x_F.flatten(), A_mod, b_mod, Aset[Fsub_i].Aeq, Aset[Fsub_i].beq, num_int)
-                        Aset[Fsub_i].A = np.concatenate((Aset[Fsub_i].A, A_up))
-                        Aset[Fsub_i].b = np.concatenate((Aset[Fsub_i].b, b_up))
-                        if self.cut_flag == 1:
-                            self.cut_num = self.cut_num + 1
-
                     # Branching
-                    x_ind_maxfrac = np.argmax(np.abs(Aset[Fsub_i].x_F[range(self.num_int)] - np.round(Aset[Fsub_i].x_F[range(self.num_int)])))
+                    x_ind_maxfrac = np.argmax(np.abs(Aset[Fsub_i].x_F[:self.num_int] - np.round(Aset[Fsub_i].x_F[:self.num_int])))
                     x_split = Aset[Fsub_i].x_F[x_ind_maxfrac]
                     print 'Branching at node: %d at x%d = %f' % (Aset[Fsub_i].node, x_ind_maxfrac+1, x_split)
                     F_sub = [None, None]
@@ -456,10 +439,10 @@ class BranchBoundNonLinear(Component):
 
             #set outputs to the boundary(solver) for the next relaxed lp solve
 
-            self.A = Aset[Fsub_i].A
-            self.b = Aset[Fsub_i].b
             self.lb = Aset[Fsub_i].lb
             self.ub = Aset[Fsub_i].ub
+
+            print "foobar", self.lb, self.ub
             self.Fsub_i = Fsub_i
             self.funCall = self.funCall + 1
 
@@ -467,4 +450,5 @@ class BranchBoundNonLinear(Component):
                 x_best_relax = Aset[Fsub_i].x_F
                 f_best_relax = Aset[Fsub_i].b_F
 
-            self.Aset = Aset
+
+

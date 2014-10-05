@@ -21,20 +21,19 @@ class NonLinearTestProblem(Component):
 
     # x1 = Float(iotype="in") 
     # x2 = Float(iotype="in") 
-    x = Array([0.,0.], iotype="in", dtype="float")
+    x = Array([1.2,15.7], iotype="in", dtype="float")
 
     f = Float(iotype="out")
     g1 = Float(iotype="out")
     g2 = Float(iotype="out")
 
     def execute(self): 
-        
         x1 = self.x[0]
         x2 = self.x[1]
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
-        print "component execute", x1, x2
+        print "component execute", x1, x2, self.x
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -159,6 +158,8 @@ class BandBSLSQPdriver(Driver):
         ljw = max(mineq, (n+1)-meq)
         jw = zeros([ljw], 'i')
 
+        print "starting opt: ", self.lb, self.ub
+
         try:
             dg, self.error_code, self.nfunc, self.ngrad = \
               slsqp(self.ncon, self.neqcon, la, self.nparam,
@@ -195,9 +196,10 @@ class BandBSLSQPdriver(Driver):
         evaluations.
 
         Note: m, me, la, n, f, and g are unused inputs."""
-        print "xnew", xnew
+        #print "xnew", xnew
 
         self.set_parameters(xnew)
+        self.parent.nonlin_test_prob.x = [4,5.3]
         super(BandBSLSQPdriver, self).run_iteration()
         f = self.eval_objective()
 

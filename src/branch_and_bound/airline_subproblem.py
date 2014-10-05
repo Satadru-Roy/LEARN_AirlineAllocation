@@ -213,5 +213,5 @@ class AirlineSubProblem(Component):
         self.lb_init = np.zeros((2*K*J, 1))
         self.ub_init = np.concatenate((
             np.ones((K*J, 1)) * self.data.inputs.MaxTrip.reshape(-1, 1),
-            np.ones((K*J, 1)) * np.inf
+            np.ones((K*J, 1)) * 1e15
         ))

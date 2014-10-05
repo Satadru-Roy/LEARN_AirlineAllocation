@@ -355,8 +355,6 @@ class BranchBoundNonLinear(Component):
             Aset.append(prob)
 
 
-
-
         if self._iter > 1:
             Aset[Fsub_i].eflag = self.exitflag_NLP
             Aset[Fsub_i].x_F = self.xopt_current
@@ -442,13 +440,19 @@ class BranchBoundNonLinear(Component):
             self.lb = Aset[Fsub_i].lb
             self.ub = Aset[Fsub_i].ub
 
-            print "foobar", self.lb, self.ub
+            self.parent.nonlinopt.lb = self.lb
+            self.parent.nonlinopt.ub = self.ub
+
             self.Fsub_i = Fsub_i
             self.funCall = self.funCall + 1
 
             if self._iter == 1:
                 x_best_relax = Aset[Fsub_i].x_F
                 f_best_relax = Aset[Fsub_i].b_F
+
+        print 
+        print 
+        print "next b and b: ", len(self.Aset), self.Fsub_i, self.lb, self.ub
 
 
 

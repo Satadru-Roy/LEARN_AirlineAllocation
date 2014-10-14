@@ -33,7 +33,7 @@ class NonLinearTestProblem(Component):
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
-        print "component execute", x1, x2, self.x
+        print "component execute", x1, x2, self.f, self.g1, self.g2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -199,7 +199,6 @@ class BandBSLSQPdriver(Driver):
         #print "xnew", xnew
 
         self.set_parameters(xnew)
-        self.parent.nonlin_test_prob.x = [4,5.3]
         super(BandBSLSQPdriver, self).run_iteration()
         f = self.eval_objective()
 

@@ -274,10 +274,10 @@ class BranchBoundNonLinear(Component):
 
 
     # Outputs to solver that solves the relaxed problem formulation
-    lb = Array(iotype='out',
+    lb = Array([0,0], iotype='out',
             desc='lower bounds for each independent variable in the solution')
 
-    ub = Array(iotype='out',
+    ub = Array([0,0], iotype='out',
             desc='upper bounds for each independent variable in the solution')
 
     # Outputs to post processing component (Final output from Branch and bound algorithm)

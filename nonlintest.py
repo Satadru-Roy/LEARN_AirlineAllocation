@@ -54,8 +54,8 @@ if __name__ == "__main__":
     print "x_opt: ", nlt.branchbound_algorithm.xopt
     print "obj_opt: ", nlt.branchbound_algorithm.obj_opt
 
-    from openmdao.util.dotgraph import plot_graph
-    plot_graph(nlt._reduced_graph)
+    # from openmdao.util.dotgraph import plot_graph
+    # plot_graph(nlt._reduced_graph)
 
 
 

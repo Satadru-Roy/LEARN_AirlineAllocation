@@ -44,7 +44,7 @@ class BranchBoundLinear(Component):
     relaxed_obj_current   = Float(np.inf, iotype='in',
             desc='optimal objective function value of the relaxed solution after each iteration obtained from the solver')
 
-    exitflag_LP  = Float(iotype='in',
+    exitflag_LP  = Int(iotype='in',
               desc='exit status of the optimization: 1=optimized, -1=max iterations reached, -2=infeasible, -3=unbounded')
 
 
@@ -269,7 +269,7 @@ class BranchBoundNonLinear(Component):
     relaxed_obj_current  = Float(np.inf, iotype='in',
             desc='optimal objective function value of the relaxed solution after each iteration obtained from the solver')
 
-    exitflag_NLP = Float(iotype='in',
+    exitflag_NLP = Int(iotype='in',
               desc='exit status of the optimization: 1=optimized, -1=max iterations reached, -2=infeasible, -3=unbounded')
 
 
@@ -358,6 +358,7 @@ class BranchBoundNonLinear(Component):
         if self._iter > 1:
             Aset[Fsub_i].eflag = self.exitflag_NLP
             Aset[Fsub_i].x_F = self.xopt_current
+            print "foobar!!!!!", Aset[Fsub_i].x_F, Aset[Fsub_i].eflag, self.parent.nonlinopt.exit_flag
             Aset[Fsub_i].b_F = self.relaxed_obj_current
 
 

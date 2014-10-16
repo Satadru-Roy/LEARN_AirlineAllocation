@@ -2,6 +2,7 @@
 
 from math import isnan
 
+import numpy as np
 from numpy import zeros, array
 
 from slsqp.slsqp import slsqp, closeunit, pyflush
@@ -113,6 +114,10 @@ class BandBSLSQPdriver(Driver):
     def start_iteration(self):
         """Perform initial setup before iteration loop begins."""
 
+        #self.set_parameters([10.2,10.2])
+        x_current = self.eval_parameters(self.parent)
+        self.set_parameters(x_current*(1+np.random.random((2,))))
+
         # Inital run to make sure the workflow executes
         super(BandBSLSQPdriver, self).run_iteration()
 
@@ -133,6 +138,8 @@ class BandBSLSQPdriver(Driver):
         self.ff = 0
         self.nfunc = 0
         self.ngrad = 0
+
+
 
         self._continue = True
 
@@ -157,8 +164,6 @@ class BandBSLSQPdriver(Driver):
         w = zeros([lw], 'd')
         ljw = max(mineq, (n+1)-meq)
         jw = zeros([ljw], 'i')
-
-        print "starting opt: ", self.lb, self.ub
 
         try:
             dg, self.error_code, self.nfunc, self.ngrad = \

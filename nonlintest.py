@@ -12,7 +12,7 @@ class NonLinTest(Assembly):
     def configure(self):
         self.add('driver', IterateUntil())
         self.add('branchbound_algorithm', BranchBoundNonLinear(n_int = 2, n_contin = 0))
-        self.add('nonlinopt', BandBSLSQPdriver())
+        self.add('nonlinopt', BandBSLSQPdriver(n_x=2))
         self.add('nonlin_test_prob', NonLinearTestProblem())
 
         #nonlin problem formulation
@@ -46,6 +46,7 @@ class NonLinTest(Assembly):
 if __name__ == "__main__":
     nlt = NonLinTest()
 
+    #initial bounds for the optimization
     nlt.nonlinopt.lb = nlt.branchbound_algorithm.lb_init = [0.,0.]
     nlt.nonlinopt.ub = nlt.branchbound_algorithm.ub_init = [1e15, 1e15]
 

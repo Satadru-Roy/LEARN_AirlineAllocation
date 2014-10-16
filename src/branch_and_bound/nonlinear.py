@@ -34,7 +34,6 @@ class NonLinearTestProblem(Component):
         self.f = x1**4 + x2**2 - x1**2*x2
         self.g1 = 1 - 2/3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
-        print "component execute", x1, x2, self.f, self.g1, self.g2
 
 
 @add_delegate(HasParameters, HasConstraints, HasObjective)
@@ -71,14 +70,13 @@ class BandBSLSQPdriver(Driver):
                      desc='Error code returned from SLSQP.')
 
     exit_flag = Int(0, iotype="out", desc="0 for fail, 1 for ok")
+    
 
-    lb = Array([0.,0.], iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter")
-    ub = Array([0.,0.], iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter")
-
-
-    def __init__(self):
+    def __init__(self, n_x):
+        """n_x: size of the design variable vector""" 
 
         super(BandBSLSQPdriver, self).__init__()
+
 
         self.error_messages = {
             -1 : "Gradient evaluation required (g & a)",
@@ -92,6 +90,11 @@ class BandBSLSQPdriver(Driver):
              8 : "Positive directional derivative for linesearch",
              9 : "Iteration limit exceeded",
         }
+
+        #create lb and ub arrays of the proper size
+
+        self.add('lb', Array(np.zeros((n_x,)), iotype="in", desc="lower bounds for the design variables, which will override values given in the add_parameter"))
+        self.add('ub', Array(np.zeros((n_x,)), iotype="in", desc="upper bounds for the design variables, which will override values given in the add_parameter"))
 
         self.x = zeros(0, 'd')
         self.x_lower_bounds = zeros(0, 'd')
@@ -114,9 +117,9 @@ class BandBSLSQPdriver(Driver):
     def start_iteration(self):
         """Perform initial setup before iteration loop begins."""
 
-        #self.set_parameters([10.2,10.2])
+        #DIRTY HACK: Need to move the initial guess away from the exact optimum of the previous case
         x_current = self.eval_parameters(self.parent)
-        self.set_parameters(x_current*(1+np.random.random((2,))))
+        self.set_parameters(x_current*(1+.2*np.random.random((2,))))
 
         # Inital run to make sure the workflow executes
         super(BandBSLSQPdriver, self).run_iteration()
@@ -138,8 +141,6 @@ class BandBSLSQPdriver(Driver):
         self.ff = 0
         self.nfunc = 0
         self.ngrad = 0
-
-
 
         self._continue = True
 

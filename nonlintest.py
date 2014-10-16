@@ -5,7 +5,8 @@ from openmdao.lib.drivers.api import IterateUntil
 from openmdao.lib.casehandlers.api import JSONCaseRecorder
 
 from branch_and_bound.branch_and_bound_nonlinear import BranchBoundNonLinear
-from branch_and_bound.nonlinear import NonLinearTestProblem, BandBSLSQPdriver
+from branch_and_bound.simple_nonlinear import NonLinearTestProblem
+from branch_and_bound.slsqp_bandb import BandBSLSQPdriver
 
 class NonLinTest(Assembly):
 

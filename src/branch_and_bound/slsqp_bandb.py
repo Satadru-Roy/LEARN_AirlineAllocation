@@ -119,7 +119,7 @@ class BandBSLSQPdriver(Driver):
 
         #DIRTY HACK: Need to move the initial guess away from the exact optimum of the previous case
         x_current = self.eval_parameters(self.parent)
-        self.set_parameters(x_current*(1+.2*np.random.random((2,))))
+        self.set_parameters(x_current*(1+np.random.random((2,))))
 
         # Inital run to make sure the workflow executes
         super(BandBSLSQPdriver, self).run_iteration()
@@ -135,8 +135,8 @@ class BandBSLSQPdriver(Driver):
         self.x = self.eval_parameters(self.parent)
         #self.x_lower_bounds = self.get_lower_bounds()
         #self.x_upper_bounds = self.get_upper_bounds()
-        self.x_lower_bounds = self.lb
-        self.x_upper_bounds = self.ub
+        self.x_lower_bounds = self.lb.copy()
+        self.x_upper_bounds = self.ub.copy()
 
         self.ff = 0
         self.nfunc = 0

@@ -16,12 +16,7 @@ class AirlineSubProblemTestCase(unittest.TestCase):
 
         asp = AirlineSubProblem()
         asp.run()
-        self.assertEqual(asp.A.shape, (14,12))
-
-class BandBTestCase(unittest.TestCase):
-
-    def test_banb(self):
-        pass
+        self.assertEqual(asp.A_init.shape, (14,12))
 
 
 if __name__ == "__main__":

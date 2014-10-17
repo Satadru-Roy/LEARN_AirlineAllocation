@@ -5,7 +5,7 @@ from openmdao.lib.drivers.api import IterateUntil
 from openmdao.lib.casehandlers.api import JSONCaseRecorder
 
 from branch_and_bound.airline_subproblem import AirlineSubProblem
-from branch_and_bound.branch_and_bound import BranchBoundLinear
+from branch_and_bound.branch_and_bound_linear import BranchBoundLinear
 from branch_and_bound.linear_program import LPSolver, LinProgSolver
 from branch_and_bound.fleet_analysis import FleetAnalysis
 

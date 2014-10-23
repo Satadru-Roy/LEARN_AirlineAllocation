@@ -20,7 +20,7 @@ class NonLinearTestProblem(Component):
         x1 = self.x[0]
         x2 = self.x[1]
         self.f = x1**4 + x2**2 - x1**2*x2
-        self.g1 = 1 - 2/3.*x1*x2
+        self.g1 = 1 - 2./3.*x1*x2
         self.g2 = 1 + (3*x1**2 - 4*x2)/3.
 
 

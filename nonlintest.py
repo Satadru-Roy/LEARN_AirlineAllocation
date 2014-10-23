@@ -7,6 +7,7 @@ from openmdao.lib.casehandlers.api import JSONCaseRecorder
 from branch_and_bound.branch_and_bound_nonlinear import BranchBoundNonLinear
 from branch_and_bound.simple_nonlinear import NonLinearTestProblem
 from branch_and_bound.slsqp_bandb import BandBSLSQPdriver
+from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 
 class NonLinTest(Assembly):
 
@@ -14,6 +15,7 @@ class NonLinTest(Assembly):
         self.add('driver', IterateUntil())
         self.add('branchbound_algorithm', BranchBoundNonLinear(n_int = 2, n_contin = 0))
         self.add('nonlinopt', BandBSLSQPdriver(n_x=2))
+        #self.add('nonlinopt', pyOptSparseDriver(n_x=2))
         self.add('nonlin_test_prob', NonLinearTestProblem())
 
         #nonlin problem formulation

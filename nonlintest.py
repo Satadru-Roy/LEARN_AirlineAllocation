@@ -7,17 +7,20 @@ from openmdao.lib.casehandlers.api import JSONCaseRecorder
 from branch_and_bound.branch_and_bound_nonlinear import BranchBoundNonLinear
 from branch_and_bound.simple_nonlinear import NonLinearTestProblem
 from branch_and_bound.slsqp_bandb import BandBSLSQPdriver
+from pyoptsparse_driver.pyoptsparse_driver import pyOptSparseDriver
 
 class NonLinTest(Assembly):
 
     def configure(self):
         self.add('driver', IterateUntil())
         self.add('branchbound_algorithm', BranchBoundNonLinear(n_int = 2, n_contin = 0))
-        self.add('nonlinopt', BandBSLSQPdriver(n_x=2))
+        #self.add('nonlinopt', BandBSLSQPdriver(n_x=2))
+        self.add('nonlinopt', pyOptSparseDriver(n_x=2))
+        self.nonlinopt.optimizer = "SNOPT"
         self.add('nonlin_test_prob', NonLinearTestProblem())
 
         #nonlin problem formulation
-        self.nonlinopt.add_parameter('nonlin_test_prob.x', low=0, high=1e15)
+        self.nonlinopt.add_parameter('nonlin_test_prob.x', low=0, high=1e3)
 
         self.nonlinopt.add_objective('nonlin_test_prob.f')
         self.nonlinopt.add_constraint('nonlin_test_prob.g1 < 0')
@@ -49,7 +52,7 @@ if __name__ == "__main__":
 
     #initial bounds for the optimization
     nlt.nonlinopt.lb = nlt.branchbound_algorithm.lb_init = [0.,0.]
-    nlt.nonlinopt.ub = nlt.branchbound_algorithm.ub_init = [1e15, 1e15]
+    nlt.nonlinopt.ub = nlt.branchbound_algorithm.ub_init = [1e3, 1e3]
 
     nlt.run()
 

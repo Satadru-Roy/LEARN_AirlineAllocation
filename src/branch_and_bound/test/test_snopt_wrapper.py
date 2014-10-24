@@ -12,7 +12,7 @@ class OptTest(Assembly):
     def configure(self): 
 
         self.add('driver', pyOptSparseDriver(n_x=2))
-        self.driver.optimzier = "SNOPT"
+        self.driver.optimizer = "SNOPT"
         self.add('prob', NonLinearTestProblem())
 
         self.driver.add_parameter('prob.x', low=0, high=1000)
@@ -36,7 +36,7 @@ class SLSQPWrapperTestCase(unittest.TestCase):
         ot.run()
 
 
-        goal = np.array([1.0,1.502])
+        goal = np.array([1.0,1.50])
         error = np.abs(ot.prob.x - goal)
         self.assertTrue(np.all(error < 1e-3))
         self.assertEqual(ot.driver.exit_flag, 1)

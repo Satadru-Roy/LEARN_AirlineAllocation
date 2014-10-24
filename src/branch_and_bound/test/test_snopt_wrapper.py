@@ -12,6 +12,7 @@ class OptTest(Assembly):
     def configure(self): 
 
         self.add('driver', pyOptSparseDriver(n_x=2))
+        self.driver.optimzier = "SNOPT"
         self.add('prob', NonLinearTestProblem())
 
         self.driver.add_parameter('prob.x', low=0, high=1000)

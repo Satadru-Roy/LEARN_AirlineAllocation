@@ -122,7 +122,6 @@ class BranchBoundNonLinear(Component):
         if self._iter > 1:
             Aset[Fsub_i].eflag = self.exitflag_NLP
             Aset[Fsub_i].x_F = self.xopt_current
-            print "foobar!!!!!", Aset[Fsub_i].x_F, Aset[Fsub_i].eflag, self.parent.nonlinopt.exit_flag
             Aset[Fsub_i].b_F = self.relaxed_obj_current
 
 

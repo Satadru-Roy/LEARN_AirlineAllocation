@@ -19,7 +19,7 @@ class NonLinTest(Assembly):
         self.nonlinopt.optimizer = "SNOPT"
         self.add('nonlin_test_prob', NonLinearTestProblem())
 
-        #nonlin problem formulation
+        #nonlin problem formulation`
         self.nonlinopt.add_parameter('nonlin_test_prob.x', low=0, high=1e3)
 
         self.nonlinopt.add_objective('nonlin_test_prob.f')
@@ -45,9 +45,13 @@ class NonLinTest(Assembly):
         self.driver.add_stop_condition('branchbound_algorithm.exec_loop != 0')
         self.driver.max_iterations = 1000000
 
+        self.recorders=[JSONCaseRecorder('nonlintest.json')]
+
 
 
 if __name__ == "__main__":
+
+    from openmdao.lib.casehandlers.api import CaseDataset, caseset_query_to_html
     nlt = NonLinTest()
 
     #initial bounds for the optimization
@@ -55,6 +59,9 @@ if __name__ == "__main__":
     nlt.nonlinopt.ub = nlt.branchbound_algorithm.ub_init = [1e3, 1e3]
 
     nlt.run()
+
+    cds = CaseDataset('nonlintest.json','json')
+    caseset_query_to_html(cds.data,'nonlintest.html')
 
     print "x_opt: ", nlt.branchbound_algorithm.xopt
     print "obj_opt: ", nlt.branchbound_algorithm.obj_opt
